@@ -24,21 +24,19 @@ let urlName;
 
 // Your first API endpoint
 app.post('/api/shorturl', (req, res, next) => {
-  try {
     const url = new URL(req.body.url).hostname;
     dns.lookup(url, (err, address) => {
-      res.json({
-        original_url: req.body.url,
-        short_url: 1
-      });
-      urlName = req.body.url
-      console.log(urlName)
+      if(err) {
+        res.json({ error: "Invalid URL"})
+      } else {
+        res.json({
+          original_url: req.body.url,
+          short_url: 1
+        });
+        urlName = req.body.url
+        console.log(address)
+      }
     })
-  } catch {
-    res.json({
-      error: "Invalid URL"
-    })
-  }
 });
 
 app.get('/api/shorturl/:short_url', (req, res) => {
