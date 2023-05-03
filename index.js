@@ -20,9 +20,10 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
+let urlName;
 
 // Your first API endpoint
-app.post('/api/shorturl', (req, res) => {
+app.post('/api/shorturl', (req, res, next) => {
   try {
     const url = new URL(req.body.url).hostname;
     dns.lookup(url, (err, address) => {
@@ -30,6 +31,8 @@ app.post('/api/shorturl', (req, res) => {
         original_url: req.body.url,
         short_url: 1
       });
+      urlName = req.body.url
+      console.log(urlName)
     })
   } catch {
     res.json({
@@ -38,7 +41,9 @@ app.post('/api/shorturl', (req, res) => {
   }
 });
 
-
+app.get('/api/shorturl/:short_url', (req, res) => {
+  res.redirect(new URL(urlName))
+})
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
